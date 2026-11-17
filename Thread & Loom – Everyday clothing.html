@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thread &amp; Loom – Everyday clothing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--surface:#fff;--ink:#16202b;--muted:#5b6673;--line:#d5dbe2;--accent:#2f4bff;--accent-ink:#fff;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171d;--surface:#1b222a;--ink:#e9edf1;--muted:#9aa5b1;--line:#2c3641;--accent:#7d90ff;--accent-ink:#0d1220;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12171d;--surface:#1b222a;--ink:#e9edf1;--muted:#9aa5b1;--line:#2c3641;--accent:#7d90ff;--accent-ink:#0d1220;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 "DM Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","DM Sans",sans-serif;line-height:1.1;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;height:64px}
+.logo{font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;margin-right:auto}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-weight:500}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+#cartCount{display:inline-block;min-width:22px;padding:0 6px;margin-left:6px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font-size:13px;text-align:center}
+.hero{padding:56px 0 32px;display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center}
+.hero h1{font-size:clamp(40px,7vw,76px);font-weight:800;letter-spacing:-.035em}
+.hero p{color:var(--muted);max-width:44ch;margin:16px 0 24px}
+.hero svg{width:100%;height:auto;border-radius:24px;background:var(--surface);border:1px solid var(--line)}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:24px 0}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+input[type=search],select{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 12px;font:inherit}
+input[type=search]{flex:1;min-width:180px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;padding-bottom:64px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.card .art{border:0;padding:0;display:block;width:100%;background:none}
+.card .art svg{display:block;width:100%;height:auto}
+.card .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{font-size:19px;font-weight:700}
+.meta{color:var(--muted);font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px}
+.price{font:700 18px "Bricolage Grotesque",sans-serif}
+.empty{grid-column:1/-1;padding:48px 0;color:var(--muted)}
+.scrim{position:fixed;inset:0;background:rgba(10,14,20,.55);z-index:30;display:none}
+.scrim.open{display:block}
+aside{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--bg);z-index:40;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s;border-left:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+aside.open{transform:none}
+aside header{position:static;padding:0 20px}
+.items{flex:1;overflow:auto;padding:12px 20px}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.item svg{width:64px;height:64px;border-radius:10px}
+.qty{display:inline-flex;align-items:center;gap:8px;margin-top:4px}
+.qty button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:var(--surface)}
+.foot{padding:16px 20px;border-top:1px solid var(--line);display:grid;gap:10px}
+.foot .tot{display:flex;justify-content:space-between;font-weight:700}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.panel{background:var(--surface);border-radius:20px;max-width:760px;width:100%;max-height:90vh;overflow:auto;display:grid;grid-template-columns:1fr 1fr}
+.panel svg{width:100%;height:100%;display:block}
+.panel .info{padding:24px;display:flex;flex-direction:column;gap:12px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.spec{margin:0;padding-left:18px;color:var(--muted);font-size:14px}
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:14px}
+@media (max-width:720px){.hero{grid-template-columns:1fr}.panel{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){aside{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <div class="logo">Thread &amp; Loom</div>
+  <button class="btn" id="themeBtn" aria-label="Switch light or dark theme">Theme</button>
+  <button class="btn primary" id="openCart" aria-label="Open cart">Cart<span id="cartCount">0</span></button>
+</div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <h1>Clothes cut for how you actually live.</h1>
+      <p>Panjabis, kameez, shirts and scarves in breathable cotton and linen. Stitched in small batches and delivered in three days.</p>
+      <button class="btn primary" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Shop all clothes</button>
+    </div>
+    <div id="heroArt"></div>
+  </section>
+
+  <section id="shop" aria-label="Products">
+    <div class="tools">
+      <input type="search" id="q" placeholder="Search clothes" aria-label="Search products">
+      <select id="sort" aria-label="Sort products">
+        <option value="featured">Featured</option>
+        <option value="low">Price: low to high</option>
+        <option value="high">Price: high to low</option>
+        <option value="name">Name</option>
+      </select>
+    </div>
+    <div class="tools" id="cats" role="group" aria-label="Categories"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<footer><div class="wrap">Thread &amp; Loom is a demo storefront. No payments are processed and nothing leaves this page.</div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside id="cart" aria-label="Shopping cart" aria-hidden="true">
+  <header><div class="bar"><div class="logo">Your cart</div><button class="btn" id="closeCart">Close</button></div></header>
+  <div class="items" id="items"></div>
+  <div class="foot">
+    <div class="tot"><span>Subtotal</span><span id="sub">$0.00</span></div>
+    <div class="meta" id="ship"></div>
+    <button class="btn primary" id="checkout">Place demo order</button>
+    <button class="btn" id="clear">Empty cart</button>
+  </div>
+</aside>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle"><div class="panel" id="panel"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const PRODUCTS=[
+ {id:1,name:"Cotton panjabi",cat:"Men",price:1850,type:"shirt",c:"#2f4bff",bg:"#dfe5ff",d:"Soft handloom cotton with a relaxed fit. Easy to wear at Eid or on any weekend."},
+ {id:2,name:"Linen shirt",cat:"Men",price:1450,type:"shirt",c:"#1f8a70",bg:"#d8f0e8",d:"Light linen that stays cool in summer. Button front, regular fit."},
+ {id:3,name:"Chino pants",cat:"Men",price:1650,type:"pants",c:"#6b7480",bg:"#e6e9ed",d:"Stretch cotton twill with a straight leg. Machine washable."},
+ {id:4,name:"Printed kurti",cat:"Women",price:1750,type:"kurti",c:"#d1495b",bg:"#f8dde1",d:"Block print on breathable cotton. Knee length with side slits."},
+ {id:5,name:"Cotton kameez",cat:"Women",price:2250,type:"kurti",c:"#7b5ea7",bg:"#e8e0f3",d:"Long kameez with a straight cut. Pairs with palazzo or churidar."},
+ {id:6,name:"Palazzo pants",cat:"Women",price:1350,type:"pants",c:"#e0a526",bg:"#fbefcf",d:"Wide leg, elastic waist, soft cotton. Comfortable all day."},
+ {id:7,name:"Muslin scarf",cat:"Accessories",price:650,type:"scarf",c:"#d1495b",bg:"#f8dde1",d:"Featherlight muslin, 180 cm long. Wear it as a scarf or a wrap."},
+ {id:8,name:"Winter shawl",cat:"Accessories",price:950,type:"scarf",c:"#2f4bff",bg:"#dfe5ff",d:"Warm woven shawl with a plain border. Folds small for travel."}
+].map(p=>({...p,sizes:p.cat==="Accessories"?["Free size"]:["S","M","L","XL"]}));
+const $=s=>document.querySelector(s);
+const fmt=n=>"৳"+n.toLocaleString("en-US");
+const SPEC={1:["100% handloom cotton","Regular fit, hip length","Machine wash cold, line dry"],2:["100% linen","Regular fit, button front","Wash cold, iron while damp"],3:["98% cotton, 2% elastane","Straight leg, mid rise","Machine wash cold"],4:["100% cotton, block print","Knee length, side slits","Hand wash first time, colour may bleed"],5:["100% cotton","Long, straight cut","Machine wash cold, gentle cycle"],6:["Cotton blend","Wide leg, elastic waist","Machine wash cold"],7:["100% muslin cotton","180 cm by 90 cm","Hand wash"],8:["Woven wool blend","200 cm by 70 cm","Dry clean or cold hand wash"]};
+function art(p){
+  const c=p.c,b=p.bg,id=p.id,T=p.type,dark="#000";
+  const O={
+   shirt:"M72 38L38 54Q30 58 28 66L22 108Q22 112 27 113L45 118L47 112V178Q47 182 51 182H159Q163 182 163 178V112L165 118L183 113Q188 112 188 108L182 66Q180 58 172 54L138 38Q128 56 105 56Q82 56 72 38Z",
+   kurti:"M78 36L44 52L26 104L46 112L58 84L50 190H160L152 84L164 112L184 104L166 52L132 36Q122 54 105 54Q88 54 78 36Z",
+   pants:"M62 28H148L156 186H112L105 88L98 186H54Z",
+   scarf:"M62 24H148L156 182L142 174L130 184L118 174L105 184L92 174L80 184L68 174L54 182Z"
+  }[T];
+  const FD={
+   shirt:"M36 72Q52 96 44 112M174 72Q158 96 166 112M68 130Q80 150 70 178M142 130Q130 150 140 178M90 90Q96 130 88 178",
+   kurti:"M62 96Q70 140 60 186M148 96Q140 140 150 186M94 110Q100 150 90 188M116 110Q112 150 122 188",
+   pants:"M78 100Q80 140 72 184M132 100Q130 140 138 184M92 96Q94 140 90 184",
+   scarf:"M70 30Q76 100 68 176M105 30Q108 100 105 180M140 30Q134 100 142 176"
+  }[T];
+  const btn=ys=>ys.map(y=>`<circle cx="105" cy="${y}" r="2.6" fill="#fffd" stroke="#0005" stroke-width=".6"/>`).join("");
+  const D={
+   shirt:`<path d="M82 36L106 66L94 74L74 46ZM128 36L104 66L116 74L136 46Z" fill="${c}" stroke="#0005" stroke-width="1.2"/><path d="M105 66V182" stroke="#0004" stroke-width="1.2"/>${btn([88,110,132,154])}<path d="M49 176H161" stroke="#fff" stroke-opacity=".3" stroke-dasharray="2 2"/>`,
+   kurti:`<path d="M105 54V104" stroke="#0004" stroke-width="1.2"/>${btn([66,82,98])}<path d="M54 160H156" stroke="#fff" stroke-opacity=".7" stroke-width="5" stroke-dasharray="1 5" stroke-linecap="round"/><path d="M51 182H159" stroke="#fff" stroke-opacity=".35" stroke-width="3"/>`,
+   pants:`<path d="M62 28H148V42H62Z" fill="#000" fill-opacity=".18"/><path d="M105 42V88" stroke="#0005"/><circle cx="105" cy="35" r="2.8" fill="#fffd" stroke="#0005" stroke-width=".6"/><path d="M66 44Q84 54 88 78M144 44Q126 54 122 78" fill="none" stroke="#0005" stroke-width="1.2"/><path d="M78 25h4v14h-4zM128 25h4v14h-4z" fill="#000" fill-opacity=".25"/>`,
+   scarf:`<path d="M58 44H152M58 52H152M58 150H152M58 158H152" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>${[60,70,80,90,100,110,120,130,140,150].map(x=>`<path d="M${x} 176v14" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`).join("")}`
+  }[T];
+  const hang=(T==="shirt"||T==="kurti")?`<path d="M71 40L105 20L139 40" fill="none" stroke="#8b919b" stroke-width="2.5" stroke-linecap="round"/><path d="M105 20Q105 12 112 12" fill="none" stroke="#8b919b" stroke-width="2.5"/>`:"";
+  const R=f=>`<rect x="0" y="0" width="210" height="210" fill="${f}"/>`;
+  return `<svg viewBox="0 0 210 210" role="img" aria-label="${p.name}"><rect width="210" height="210" fill="${b}"/><defs><linearGradient id="l${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient><pattern id="w${id}" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M0 .5H3M.5 0V3" stroke="#000" stroke-opacity=".08"/></pattern><pattern id="d${id}" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.7" fill="#fff" fill-opacity=".55"/><circle cx="11" cy="11" r="1.2" fill="#fff" fill-opacity=".4"/></pattern><path id="s${id}" d="${O}"/><clipPath id="k${id}"><use href="#s${id}"/></clipPath></defs><ellipse cx="105" cy="199" rx="64" ry="6" fill="#000" opacity=".16"/>${hang}<use href="#s${id}" fill="${c}"/><g clip-path="url(#k${id})">${id===4?R(`url(#d${id})`):""}${R(`url(#w${id})`)}<g fill="none" stroke-linecap="round"><path d="${FD}" stroke="#000" stroke-opacity=".12" stroke-width="3"/><path d="${FD}" stroke="#fff" stroke-opacity=".16" stroke-width="2" transform="translate(3 0)"/></g>${R(`url(#l${id})`)}</g>${D}<use href="#s${id}" fill="none" stroke="#000" stroke-opacity=".28" stroke-width="1.2"/></svg>`;
+}
+let cart=[],cat="All",size="M";
+try{cart=JSON.parse(localStorage.getItem("kiln-cart")||"[]")}catch(e){cart=[]}
+cart=cart.filter(i=>i.s);
+function save(){try{localStorage.setItem("kiln-cart",JSON.stringify(cart))}catch(e){}}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
+
+function renderCats(){
+  const cats=["All",...new Set(PRODUCTS.map(p=>p.cat))];
+  $("#cats").innerHTML=cats.map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${c}">${c}</button>`).join("");
+}
+function renderGrid(){
+  const q=$("#q").value.trim().toLowerCase(),s=$("#sort").value;
+  let list=PRODUCTS.filter(p=>(cat==="All"||p.cat===cat)&&(p.name+p.d).toLowerCase().includes(q));
+  if(s==="low")list.sort((a,b)=>a.price-b.price);
+  if(s==="high")list.sort((a,b)=>b.price-a.price);
+  if(s==="name")list.sort((a,b)=>a.name.localeCompare(b.name));
+  $("#grid").innerHTML=list.length?list.map(p=>`<article class="card">
+    <button class="art" data-view="${p.id}" aria-label="View ${p.name}">${art(p)}</button>
+    <div class="body"><h3>${p.name}</h3><div class="meta">${p.cat}</div>
+    <div class="row"><span class="price">${fmt(p.price)}</span><button class="btn primary" data-view="${p.id}">Choose size</button></div></div></article>`).join("")
+    :`<div class="empty">No pieces match “${q}”. Clear the search or pick another category.</div>`;
+}
+function renderCart(){
+  const n=cart.reduce((a,i)=>a+i.q,0),sub=cart.reduce((a,i)=>a+i.q*PRODUCTS.find(p=>p.id===i.id).price,0);
+  $("#cartCount").textContent=n;
+  $("#items").innerHTML=cart.length?cart.map(i=>{const p=PRODUCTS.find(x=>x.id===i.id);
+    return `<div class="item">${art(p)}<div><strong>${p.name}</strong><div class="meta">Size ${i.s}, ${fmt(p.price)}</div>
+    <div class="qty"><button data-dec="${p.id}|${i.s}" aria-label="Remove one ${p.name}">−</button><span>${i.q}</span><button data-inc="${p.id}|${i.s}" aria-label="Add one ${p.name}">+</button></div></div>
+    <strong>${fmt(p.price*i.q)}</strong></div>`}).join("")
+    :`<p class="meta" style="padding:24px 0">Your cart is empty. Add a piece from the shop.</p>`;
+  $("#sub").textContent=fmt(sub);
+  $("#ship").textContent=sub===0?"":sub>=3000?"Free delivery applied.":`Add ${fmt(3000-sub)} more for free delivery.`;
+  $("#checkout").disabled=$("#clear").disabled=!cart.length;
+  save();
+}
+function add(id,s){const i=cart.find(x=>x.id===id&&x.s===s);i?i.q++:cart.push({id,s,q:1});renderCart();toast("Added to cart")}
+function change(k,d){const [id,s]=k.split("|");const i=cart.find(x=>x.id===+id&&x.s===s);if(!i)return;i.q+=d;if(i.q<=0)cart=cart.filter(x=>x!==i);renderCart()}
+function openCart(o){$("#cart").classList.toggle("open",o);$("#scrim").classList.toggle("open",o);$("#cart").setAttribute("aria-hidden",!o);if(o)$("#closeCart").focus()}
+function openModal(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  size=p.sizes[p.sizes.length>1?1:0];
+  $("#panel").innerHTML=`<div>${art(p)}</div><div class="info"><h2 id="mTitle">${p.name}</h2><div class="meta">${p.cat}</div>
+  <div class="tools" style="margin:0" role="group" aria-label="Size">${p.sizes.map(z=>`<button class="chip" data-sz="${z}" aria-pressed="${z===size}">${z}</button>`).join("")}</div>
+  <p>${p.d}</p><ul class="spec">${SPEC[p.id].map(s=>`<li>${s}</li>`).join("")}</ul><div class="price">${fmt(p.price)}</div>
+  <button class="btn primary" data-add="${p.id}">Add to cart</button><button class="btn" id="closeModal">Close</button></div>`;
+  $("#modal").classList.add("open");$("#scrim").classList.add("open");$("#closeModal").focus();
+}
+function closeAll(){$("#modal").classList.remove("open");openCart(false);$("#scrim").classList.remove("open")}
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.add){add(+t.dataset.add,size);closeAll()}
+  else if(t.dataset.view)openModal(+t.dataset.view);
+  else if(t.dataset.sz){size=t.dataset.sz;document.querySelectorAll("[data-sz]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sz===size))}
+  else if(t.dataset.c){cat=t.dataset.c;renderCats();renderGrid()}
+  else if(t.dataset.inc)change(t.dataset.inc,1);
+  else if(t.dataset.dec)change(t.dataset.dec,-1);
+  else if(t.id==="closeModal")closeAll();
+});
+$("#openCart").onclick=()=>openCart(true);
+$("#closeCart").onclick=closeAll;
+$("#scrim").onclick=closeAll;
+$("#clear").onclick=()=>{cart=[];renderCart()};
+$("#checkout").onclick=()=>{cart=[];renderCart();closeAll();toast("Order placed (demo only)")};
+$("#q").oninput=renderGrid;$("#sort").onchange=renderGrid;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
+$("#themeBtn").onclick=()=>{const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"};
+
+$("#heroArt").innerHTML=`<svg viewBox="0 0 420 300" role="img" aria-label="Three garments on a rail"><rect width="420" height="300" fill="${"#dfe5ff"}"/><rect x="0" y="250" width="420" height="50" fill="#2f4bff" opacity=".18"/>
+<g transform="translate(20 70) scale(.9)">${art(PRODUCTS[3]).replace(/<svg[^>]*>|<\/svg>|<rect width="210" height="210"[^>]*>/g,"")}</g>
+<g transform="translate(140 100) scale(1)">${art(PRODUCTS[0]).replace(/<svg[^>]*>|<\/svg>|<rect width="210" height="210"[^>]*>/g,"")}</g>
+<g transform="translate(250 90) scale(.9)">${art(PRODUCTS[6]).replace(/<svg[^>]*>|<\/svg>|<rect width="210" height="210"[^>]*>/g,"")}</g></svg>`;
+renderCats();renderGrid();renderCart();
+</script>
+</body>
+</html>

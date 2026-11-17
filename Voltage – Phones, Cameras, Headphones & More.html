@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voltage – Phones, Cameras, Headphones & More</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--surface:#fff;--ink:#14181f;--mute:#5b6572;--line:#d8dee5;--accent:#2f4bff;--accent-ink:#fff;--hot:#ffd23f;--hot-ink:#14181f;--tile:#e4e9f0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--surface:#171b22;--ink:#eef1f4;--mute:#9aa5b3;--line:#2a313b;--accent:#6b82ff;--accent-ink:#0e1116;--tile:#202632;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1116;--surface:#171b22;--ink:#eef1f4;--mute:#9aa5b3;--line:#2a313b;--accent:#6b82ff;--accent-ink:#0e1116;--tile:#202632;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3,.logo{font-family:"Bricolage Grotesque",Inter,system-ui,sans-serif;margin:0;letter-spacing:-.02em}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar{max-width:1180px;margin:auto;display:flex;gap:16px;align-items:center;padding:12px 20px}
+.logo{font-size:26px;font-weight:800}
+.logo i{font-style:normal;color:var(--accent)}
+.search{flex:1;min-width:0}
+.search input{width:100%;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.cartbtn{background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:10px 18px;font-weight:600;white-space:nowrap}
+.cartbtn b{background:var(--hot);color:var(--hot-ink);border-radius:999px;padding:1px 8px;margin-left:6px}
+main{max-width:1180px;margin:auto;padding:24px 20px 60px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;background:var(--ink);color:var(--bg);border-radius:20px;padding:44px;overflow:hidden}
+.hero h1{font-size:clamp(34px,5vw,58px);font-weight:800;line-height:1.02}
+.hero p{max-width:44ch;color:inherit;opacity:.8;margin:16px 0 24px}
+.cta{background:var(--hot);color:var(--hot-ink);border:0;border-radius:999px;padding:13px 26px;font-weight:600}
+.hero .art{display:flex;align-items:center;justify-content:center;background:var(--accent);border-radius:16px;min-height:220px}
+.hero .art svg{width:70%;max-width:260px}
+.perks{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0;color:var(--mute);font-size:14px}
+.perks span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:28px 0 18px}
+.chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+select{margin-left:auto;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.thumb{background:radial-gradient(circle at 50% 38%,var(--surface),var(--tile));aspect-ratio:1/.85;display:flex;align-items:center;justify-content:center;position:relative}
+.thumb svg{width:56%;height:70%;filter:drop-shadow(0 12px 12px rgba(0,0,0,.28))}
+.tag{position:absolute;top:10px;left:10px;background:var(--hot);color:var(--hot-ink);font-size:12px;font-weight:600;border-radius:6px;padding:2px 8px}
+.info{padding:14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.info h3{font-size:17px;font-weight:600}
+.cat{color:var(--mute);font-size:13px}
+.price{font-weight:600;font-size:18px;margin-top:auto;padding-top:8px}
+.price s{color:var(--mute);font-weight:400;font-size:14px;margin-left:6px}
+.add{margin-top:10px;border:1.5px solid var(--ink);background:transparent;border-radius:10px;padding:9px;font-weight:600}
+.add:hover{background:var(--ink);color:var(--bg)}
+.empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:50px 0}
+footer{text-align:center;color:var(--mute);font-size:14px;padding:30px 20px}
+.shade{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+.shade.on{opacity:1;pointer-events:auto}
+aside{position:fixed;top:0;bottom:0;right:0;width:min(400px,100%);background:var(--surface);z-index:40;transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) 20px calc(18px + env(safe-area-inset-bottom,0px))}
+aside.on{transform:none}
+aside .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.lines{flex:1;overflow:auto}
+.line{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .mini{width:56px;height:56px;background:var(--tile);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.line .mini svg{width:70%;height:70%}
+.qty{display:flex;align-items:center;gap:8px;margin-top:4px}
+.qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--bg)}
+.x{background:none;border:0;color:var(--mute);font-size:20px}
+.total{display:flex;justify-content:space-between;font-weight:600;font-size:18px;padding:14px 0}
+.pay{width:100%;background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:14px;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:760px){.hero{grid-template-columns:1fr;padding:28px}.bar{flex-wrap:wrap}.search{order:3;flex-basis:100%}.cartbtn{margin-left:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+<div class="logo">Volt<i>age</i></div>
+<div class="search"><input id="q" type="search" placeholder="Search phones, cameras, headphones…" aria-label="Search products"></div>
+<button class="cartbtn" id="open">Cart<b id="count">0</b></button>
+</div></header>
+
+<main>
+<section class="hero">
+<div><h1>Good gear, honest prices.</h1>
+<p>Phones, cameras, headphones and more. Genuine products, 12-month warranty and delivery across Bangladesh.</p>
+<button class="cta" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Shop all products</button></div>
+<div class="art" aria-hidden="true"><svg viewBox="0 0 100 100"><rect x="30" y="8" width="40" height="84" rx="8" fill="#14181f"/><rect x="34" y="14" width="32" height="70" rx="3" fill="#ffd23f"/><circle cx="50" cy="88" r="2.5" fill="#fff"/></svg></div>
+</section>
+<div class="perks"><span>Free delivery over ৳5,000</span><span>7-day returns</span><span>Cash on delivery</span></div>
+
+<div class="tools" id="shop">
+<div id="chips"></div>
+<select id="sort" aria-label="Sort products"><option value="f">Featured</option><option value="l">Price: low to high</option><option value="h">Price: high to low</option><option value="r">Top rated</option></select>
+</div>
+<div class="grid" id="grid"></div>
+</main>
+<footer>© 2026 Voltage Electronics · Demo store: no real payments are taken.</footer>
+
+<div class="shade" id="shade"></div>
+<aside id="drawer" aria-label="Shopping cart">
+<div class="top"><h2>Your cart</h2><button class="x" id="close" aria-label="Close cart">×</button></div>
+<div class="lines" id="lines"></div>
+<div class="total"><span>Total</span><span id="total">৳0</span></div>
+<button class="pay" id="pay">Place order</button>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+var ICONS={
+Phone:'<svg viewBox="0 0 60 100"><rect x="8" y="4" width="44" height="92" rx="9" fill="#14181f"/><rect x="12" y="10" width="36" height="78" rx="4" fill="#2f4bff"/><circle cx="30" cy="92" r="2" fill="#fff"/></svg>',
+Camera:'<svg viewBox="0 0 100 80"><rect x="6" y="18" width="88" height="56" rx="9" fill="#14181f"/><rect x="30" y="8" width="22" height="12" rx="3" fill="#14181f"/><circle cx="50" cy="46" r="21" fill="#5b6572"/><circle cx="50" cy="46" r="14" fill="#2f4bff"/><circle cx="50" cy="46" r="6" fill="#14181f"/><circle cx="82" cy="28" r="3" fill="#ffd23f"/></svg>',
+Headphones:'<svg viewBox="0 0 100 100"><path d="M20 62V50a30 30 0 0 1 60 0v12" fill="none" stroke="#14181f" stroke-width="7"/><rect x="10" y="56" width="20" height="32" rx="8" fill="#2f4bff"/><rect x="70" y="56" width="20" height="32" rx="8" fill="#2f4bff"/></svg>',
+Watches:'<svg viewBox="0 0 70 100"><rect x="22" y="2" width="26" height="96" rx="8" fill="#5b6572"/><rect x="10" y="26" width="50" height="48" rx="13" fill="#14181f"/><rect x="15" y="31" width="40" height="38" rx="9" fill="#ffd23f"/></svg>',
+Laptops:'<svg viewBox="0 0 110 80"><rect x="16" y="8" width="78" height="52" rx="5" fill="#14181f"/><rect x="21" y="13" width="68" height="42" rx="2" fill="#2f4bff"/><path d="M4 64h102l-8 10H12z" fill="#5b6572"/></svg>',
+Speakers:'<svg viewBox="0 0 70 100"><rect x="8" y="4" width="54" height="92" rx="12" fill="#14181f"/><circle cx="35" cy="34" r="12" fill="#5b6572"/><circle cx="35" cy="68" r="17" fill="#2f4bff"/><circle cx="35" cy="68" r="6" fill="#14181f"/></svg>'};
+var P=[
+{id:1,n:"Nova X Pro 5G",c:"Phone",p:89990,o:99990,r:4.7,t:"Sale"},
+{id:2,n:"Nova Lite 128GB",c:"Phone",p:24990,r:4.3},
+{id:3,n:"Arc Fold Z",c:"Phone",p:129990,r:4.6,t:"New"},
+{id:4,n:"Lumen Mirrorless M5",c:"Camera",p:114990,r:4.8,t:"New"},
+{id:5,n:"Lumen Compact C20",c:"Camera",p:42990,o:47990,r:4.4,t:"Sale"},
+{id:6,n:"TrailCam Action 4K",c:"Camera",p:21990,r:4.5},
+{id:7,n:"Echo ANC Over-Ear",c:"Headphones",p:18990,o:22990,r:4.7,t:"Sale"},
+{id:8,n:"Echo Buds Air",c:"Headphones",p:6990,r:4.4},
+{id:9,n:"Studio Pro Wired",c:"Headphones",p:11990,r:4.6},
+{id:10,n:"Pulse Watch S2",c:"Watches",p:12990,r:4.3},
+{id:11,n:"Slate 14 Laptop",c:"Laptops",p:74990,r:4.5},
+{id:12,n:"Boom Mini Speaker",c:"Speakers",p:4990,o:5990,r:4.2,t:"Sale"}];
+ICONS={
+Phone:'<svg viewBox="0 0 60 100"><defs><linearGradient id="gp" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d83b0"/><stop offset="1" stop-color="#1c2438"/></linearGradient><radialGradient id="gl"><stop offset="0" stop-color="#7d8cab"/><stop offset=".45" stop-color="#10141d"/><stop offset="1" stop-color="#05070b"/></radialGradient></defs><rect x="8" y="4" width="44" height="92" rx="9" fill="url(#gp)"/><rect x="8.5" y="4.5" width="43" height="91" rx="8.5" fill="none" stroke="#ffffff66"/><rect x="12" y="8" width="25" height="27" rx="7" fill="#0c0f16" opacity=".85"/><circle cx="20" cy="16" r="4.6" fill="url(#gl)" stroke="#9aa5b3"/><circle cx="20" cy="27" r="4.6" fill="url(#gl)" stroke="#9aa5b3"/><circle cx="31" cy="21.5" r="4.6" fill="url(#gl)" stroke="#9aa5b3"/><circle cx="31" cy="12" r="1.5" fill="#ffe08a"/><circle cx="30" cy="66" r="5" fill="#ffffff30"/></svg>',
+Camera:'<svg viewBox="0 0 100 80"><defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#454b56"/><stop offset="1" stop-color="#14181f"/></linearGradient><radialGradient id="gg"><stop offset=".1" stop-color="#8fb0ff"/><stop offset=".4" stop-color="#1a2a6c"/><stop offset="1" stop-color="#05070b"/></radialGradient></defs><path d="M33 20 38 8H64L68 20Z" fill="#2a2f38"/><rect x="6" y="20" width="88" height="54" rx="8" fill="url(#gb)"/><rect x="6" y="20" width="16" height="54" rx="8" fill="#2b3038"/><rect x="74" y="13" width="14" height="7" rx="2" fill="#7b8594"/><circle cx="28" cy="15" r="3" fill="#e5322d"/><circle cx="52" cy="47" r="24" fill="#0b0d12"/><circle cx="52" cy="47" r="21" fill="none" stroke="#6d7684" stroke-width="2"/><circle cx="52" cy="47" r="16" fill="url(#gg)"/><circle cx="52" cy="47" r="7" fill="#02040a"/><circle cx="45" cy="40" r="3" fill="#fff" opacity=".55"/></svg>',
+Headphones:'<svg viewBox="0 0 100 100"><defs><linearGradient id="gh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5b6572"/><stop offset=".5" stop-color="#2a2f38"/><stop offset="1" stop-color="#14181f"/></linearGradient><linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a515c"/><stop offset="1" stop-color="#14181f"/></linearGradient></defs><path d="M20 64V50a30 30 0 0 1 60 0v14" fill="none" stroke="url(#gh)" stroke-width="8"/><rect x="8" y="54" width="26" height="38" rx="12" fill="url(#gc)"/><rect x="28" y="58" width="8" height="30" rx="4" fill="#0a0c10"/><rect x="66" y="54" width="26" height="38" rx="12" fill="url(#gc)"/><rect x="64" y="58" width="8" height="30" rx="4" fill="#0a0c10"/><rect x="12" y="60" width="4" height="20" rx="2" fill="#ffffff30"/><rect x="84" y="60" width="4" height="20" rx="2" fill="#ffffff30"/></svg>',
+Watches:'<svg viewBox="0 0 70 100"><defs><linearGradient id="gs" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3f48"/><stop offset=".5" stop-color="#6d7684"/><stop offset="1" stop-color="#2a2f38"/></linearGradient><linearGradient id="gw2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e4e9f0"/><stop offset="1" stop-color="#8b95a3"/></linearGradient></defs><rect x="22" y="2" width="26" height="34" rx="7" fill="url(#gs)"/><rect x="22" y="64" width="26" height="34" rx="7" fill="url(#gs)"/><rect x="10" y="26" width="50" height="48" rx="14" fill="url(#gw2)"/><rect x="60" y="41" width="4" height="10" rx="2" fill="#8b95a3"/><rect x="14" y="30" width="42" height="40" rx="11" fill="#05070b"/><circle cx="35" cy="50" r="12" fill="none" stroke="#ff4d6d" stroke-width="3" stroke-dasharray="50 26"/><circle cx="35" cy="50" r="7" fill="none" stroke="#3ddc97" stroke-width="3" stroke-dasharray="28 16"/></svg>',
+Laptops:'<svg viewBox="0 0 110 80"><defs><linearGradient id="gw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f4bff"/><stop offset=".6" stop-color="#b45cff"/><stop offset="1" stop-color="#ffb347"/></linearGradient><linearGradient id="gk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e9f0"/><stop offset="1" stop-color="#8b95a3"/></linearGradient></defs><rect x="14" y="6" width="82" height="54" rx="5" fill="#1a1d24"/><rect x="18" y="10" width="74" height="46" rx="2" fill="url(#gw)"/><path d="M2 62H108L102 74H8Z" fill="url(#gk)"/><rect x="45" y="62" width="20" height="3" rx="1.5" fill="#6d7684"/></svg>',
+Speakers:'<svg viewBox="0 0 70 100"><defs><linearGradient id="gsp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1a1d24"/><stop offset=".4" stop-color="#4a515c"/><stop offset="1" stop-color="#1a1d24"/></linearGradient><pattern id="pm" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#0a0c10"/></pattern></defs><rect x="8" y="8" width="54" height="86" rx="15" fill="url(#gsp)"/><rect x="13" y="28" width="44" height="60" rx="10" fill="url(#pm)"/><circle cx="24" cy="18" r="3" fill="#9aa5b3"/><circle cx="35" cy="18" r="3" fill="#9aa5b3"/><circle cx="46" cy="18" r="3" fill="#ffd23f"/></svg>'};
+var cats=["All"].concat(Array.from(new Set(P.map(function(x){return x.c}))));
+var cat="All",cart={},$=function(i){return document.getElementById(i)};
+function money(n){return "৳"+n.toLocaleString("en-US")}
+function chips(){$("chips").innerHTML=cats.map(function(c){return '<button class="chip" aria-pressed="'+(c===cat)+'" data-c="'+c+'">'+c+'</button>'}).join(" ")}
+function list(){
+ var q=$("q").value.trim().toLowerCase(),s=$("sort").value;
+ var a=P.filter(function(x){return (cat==="All"||x.c===cat)&&(x.n+" "+x.c).toLowerCase().indexOf(q)>-1});
+ if(s==="l")a.sort(function(x,y){return x.p-y.p});
+ if(s==="h")a.sort(function(x,y){return y.p-x.p});
+ if(s==="r")a.sort(function(x,y){return y.r-x.r});
+ $("grid").innerHTML=a.length?a.map(function(x){return '<article class="card"><div class="thumb">'+(x.t?'<span class="tag">'+x.t+'</span>':'')+ICONS[x.c]+'</div><div class="info"><span class="cat">'+x.c+' · ★ '+x.r+'</span><h3>'+x.n+'</h3><div class="price">'+money(x.p)+(x.o?'<s>'+money(x.o)+'</s>':'')+'</div><button class="add" data-id="'+x.id+'">Add to cart</button></div></article>'}).join(""):'<div class="empty">No products match. Try another search or category.</div>';
+}
+function render(){
+ var ids=Object.keys(cart),t=0,n=0;
+ $("lines").innerHTML=ids.length?ids.map(function(i){var x=P.filter(function(y){return y.id==i})[0],q=cart[i];t+=x.p*q;n+=q;
+  return '<div class="line"><div class="mini">'+ICONS[x.c]+'</div><div><strong>'+x.n+'</strong><div>'+money(x.p)+'</div><div class="qty"><button data-d="-1" data-id="'+i+'" aria-label="Decrease">−</button>'+q+'<button data-d="1" data-id="'+i+'" aria-label="Increase">+</button></div></div><button class="x" data-rm="'+i+'" aria-label="Remove">×</button></div>'}).join(""):'<p class="empty">Your cart is empty. Add a product to get started.</p>';
+ $("total").textContent=money(t);$("count").textContent=n;$("pay").disabled=!n;$("pay").style.opacity=n?1:.5;
+}
+function toast(m){var e=$("toast");e.textContent=m;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove("on")},1800)}
+function drawer(on){$("drawer").classList.toggle("on",on);$("shade").classList.toggle("on",on)}
+$("chips").onclick=function(e){var c=e.target.getAttribute("data-c");if(c){cat=c;chips();list()}};
+$("q").oninput=list;$("sort").onchange=list;
+$("grid").onclick=function(e){var i=e.target.getAttribute("data-id");if(i){cart[i]=(cart[i]||0)+1;render();toast("Added to cart")}};
+$("lines").onclick=function(e){var t=e.target,i=t.getAttribute("data-id"),d=t.getAttribute("data-d"),r=t.getAttribute("data-rm");
+ if(i&&d){cart[i]+=+d;if(cart[i]<1)delete cart[i]}if(r)delete cart[r];render()};
+$("open").onclick=function(){drawer(true)};$("close").onclick=$("shade").onclick=function(){drawer(false)};
+$("pay").onclick=function(){cart={};render();drawer(false);toast("Order placed. Thank you!")};
+chips();list();render();
+</script>
+</body>
+</html>
